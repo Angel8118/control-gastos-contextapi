@@ -4,7 +4,8 @@ import 'react-calendar/dist/Calendar.css';
 import 'react-date-picker/dist/DatePicker.css';
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import type { DraftExpense, Value } from "../types";
-import ErrorMesage from "./ErrorMesage";
+import ErrorMesage from "./ErrorMessage";
+import { useBudget } from "../hooks/useBudget";
 
 
 
@@ -18,6 +19,7 @@ export default function ExpenseForm() {
     })
 
     const [error, setError] = useState('');
+    const { dispatch } = useBudget()
 
     const handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -42,6 +44,16 @@ export default function ExpenseForm() {
             setError('Todos los campos son obligatorios');
             return;
         }
+        // Agregar un nuevo gasto
+        dispatch({type: 'add-expense', payload: {expense}})
+        // Reiniciar el state
+        setExpense({
+            amount: 0,
+            expenseName: '',
+            category: '',
+            date: new Date()
+        })
+
     }
 
     return (
@@ -64,8 +76,9 @@ export default function ExpenseForm() {
                     type="text"
                     id="expenseName"
                     placeholder="Añade el nombre del gasto"
-                    className="bg-slate-100 p-2"
+                    className="bg-slate-100 p-2" 
                     name="expenseName"
+                    value={expense.expenseName}
                     onChange={handleChange} />
             </div>
 
@@ -80,6 +93,7 @@ export default function ExpenseForm() {
                     placeholder="Añade la cantidad del gasto Ej. 500"
                     className="bg-slate-100 p-2"
                     name="amount"
+                    value={expense.amount}
                     onChange={handleChange} />
             </div>
 
@@ -92,6 +106,7 @@ export default function ExpenseForm() {
                     id="category"
                     className="bg-slate-100 p-2"
                     name="category"
+                    value={expense.category}
                     onChange={handleChange}
                 >
                     <option value="">-- Seleccione --</option>

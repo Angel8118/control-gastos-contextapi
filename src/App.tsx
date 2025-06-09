@@ -24,6 +24,7 @@ export default function App() {
 
       {isValidBudget && (
         <main className="max-w-3xl mx-auto py-10">
+          
           <ExpenseModal />
         </main>
       )}
